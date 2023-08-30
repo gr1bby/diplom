@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Данные с сервера</title>
+    <style>
+      .container {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        padding: 10px;
+        border: 1px solid #ccc;
+      }
+      .container.left {
+        border-right: none;
+      }
+      .container.right {
+        border-left: none;
+      }
+      .container .question {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+      .container .answer {
+        display: flex;
+        flex-direction: row;
+        margin-top: 10px;
+      }
+      .container .answer input[type=text] {
+        width: 300px;
+        margin-right: 10px;
+      }
+    </style>
+    <script>
+      function sendAnswer(event) {
+        event.preventDefault();
+        const input = event.target.parentNode.querySelector('input[name="answer"]');
+        const answer = input.value;
+        const container = event.target.closest('.container');
+        const question = container.querySelector('.question').textContent;
+        fetch('https://31fa-93-84-98-159.ngrok-free.app/send_answer', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ question, answer })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.status === 'ok') {
+            const answerDiv = document.createElement('div');
+            answerDiv.textContent = answer;
+            container.querySelector('.answer').innerHTML = '';
+            container.querySelector('.answer').appendChild(answerDiv);
+          }
+        })
+        .catch(error => {
+          console.error(error);
+        });
+      }
+
+      document.addEventListener('DOMContentLoaded', () => {
+        const buttons = document.querySelectorAll('.answer button');
+        buttons.forEach(button => {
+          button.addEventListener('click', sendAnswer);
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <h1>Данные с сервера</h1>
+    <div class="waiting">
+      <h2>Ожидающие вопросы</h2>
+      {% for item in data if item['status'] == 'waiting' %}
+        <div class="container left">
+          <div class="question">{{ item['user_chat_id'] }}, {{ item['user_question'] }}</div>
+          <div class="answer">
+            <input type="text" name="answer" placeholder="Введите ответ...">
+            <button>Отправить</button>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+    <div class="ended">
+      <h2>Завершенные вопросы</h2>
+      {% for item in data if item['status'] == 'ended' %}
+        <div class="container right">
+          <div class="question">{{ item['user_chat_id'] }}, {{ item['user_question'] }}</div>
+          <div class="answer">
+            {% if item['user_answer'] %}
+              <div>{{ item['user_answer'] }}</div>
+            {% else %}
+              <input type="text" name="answer" placeholder="Введите ответ...">
+              <button>Отправить</button>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </body>
+</html>

@@ -1,0 +1,14 @@
+[
+    {"name": "VK", "api_url": "https://api.vk.com/"},
+    {"name": "Viber", "api_url": "https://chatapi.viber.com/pa/"},
+    {"name": "Telegram", "api_url": "https://api.telegram.org/bot"},
+
+    {"user_id": 1, "status": "ожидает ответа оператора"},
+    {"user_id": 2, "status": "ожидает ответа оператора"},
+    {"user_id": 3, "status": "в работе"},
+    {"user_id": 4, "status": "закрыта"},
+
+    {"request_id": 1, "operator_id": 1, "response": "К сожалению, я не могу ответить на ваш вопрос"},
+    {"request_id": 2, "operator_id": 2, "response": "Я проверил, и вы правы, это действительно так!"},
+    {"request_id": 3, "operator_id": 3, "response": "Ваша заявка решена, спасибо за обращение!"}
+]
